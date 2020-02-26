@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>WiFi二维码，一扫就能连，我的已经做好了，你也试试吧！</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+    <meta name="description" content="制作你的WiFi二维码，扫一扫就能连WiFi，快来试试吧！">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="qrcode.js"></script>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-md-4 col-12"></div>
+                    <div class="col-md-4 col-12">
+                        <br/>
+                        <h3 class="text-center">WiFi二维码在线制作</h3>
+                        <p class="text-left"><b>使用帮助:</b> 填写WiFi名称和密码，点击下方“生成我的二维码”按钮，即可生成WiFi二维码。把生成的二维码<b>保存到手机或者打印出来贴在家里</b>，访客到你家只需要用 <b>手机自带的相机</b> 扫描二维码即可连接WiFi，就不用辛苦输密码啦！<br/>
+                        <b style="color:red">注意要用手机自带的相机扫码，用微信扫是不行的！一些比较老的手机可能不支持，但大部分新手机都是支持的。</b>
+                        </p>
+                        <form>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend"><span class="input-group-text">WiFi名称</span></div>
+                                <input type="text" class="form-control" id="ssid" />
+                            </div>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend"><span class="input-group-text">WiFi密码</span></div>
+                                <input type="password" class="form-control" id="password" />
+                            </div>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend"><span class="input-group-text">加密类型</span></div>
+                                <select id="ap_type" class="form-control">
+                                    <option value="WPA/WPA2">WPA/WPA2</option>
+                                    <option value="WEP">WEP</option>
+                                </select>
+                            </div>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <input type="checkbox" value="1" />&nbsp;<label>👈如果WiFi是隐藏的请勾选这里 (●ˇ∀ˇ●) </label>
+                                </div>
+                            </div>
+                            <!-- <span class="btn btn-block btn-success" id="generate">生成我的二维码</span> -->
+                            <button id="generate" type="button" class="btn btn-block btn-success" data-toggle="modal" data-target="#myModal">生成我的二维码</button>
+
+                        </form>
+                        <br/>
+                        <p>
+                            <h5 class="text-center">隐私声明</h5>
+                            <b>这个东西是否会偷偷存我的WiFi密码？</b><br/> 答：当然不会，必须不会！根据《中华人民共和国网络安全法》，私自收集用户信息是违法的。本网站采用浏览器前端JS进行运算生成二维码，不会把你的信息上传到后台服务器，敏感信息压根就不会从你的设备传出来。（不信可以找个程序猿问问）<br/>
+                            再说作者不在你家附近，要你的WiFi密码也没什么用呀！
+                            <br/><br/>
+                            <b>这个二维码是否会泄露我的WiFi密码？</b><br/> 答：这个是有可能的。假如二维码被坏人得到的话，坏人是可以从二维码图像中获取你的WiFi密码的。（所以就像保护果照一样保护好二维码就好啦！）
+                            </p>
+                            <hr/>
+                        <p class="text-center">
+                            <h5>喜欢就帮忙分享吧，也可以长按下方二维码识别，赞助作者哟～</h5>
+                            <img width="206" height="188" src="reward.jpg"/>
+                        </p>
+                        <p>本程序开放源代码，Github地址<a href="https://github.com/Chorder/WiFiQrcode">https://github.com/Chorder/WiFiQrcode</a></p>
+                    </div>
+                    <div class="col-md-4 col-12"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div id="qrcode"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function makeCode() {
+            var ssid = $("#ssid").val();
+            var password = $("#password").val();
+            var ap_hidden = $("#ap_hidden").is(':checked') ? "1" : "";
+            var ap_type = $("#ap_type ").val();
+            /*WIFI:S:test;P:12345678;T:WPA/WPA2;H:1;*/
+            var wifi_text = "WIFI:S:" + ssid + ";P:" + password + ";T:" + ap_type + ";H:" + ap_hidden + ";";
+            if (ssid == "") {
+                $("#qrcode").text('WiFi名称不能为空！');
+            } else {
+                $("#qrcode").text('你的WiFi二维码(长按即可保存图片)：');
+                console.log(wifi_text);
+                var qrcode = new QRCode(document.getElementById("qrcode"), {
+                    width: 288,
+                    height: 288,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                qrcode.makeCode(wifi_text);
+            }
+        }
+        $("#generate").click(function() {
+            makeCode();
+        });
+    </script>
+
+    <script type="text/javascript" src="//js.users.51.la/20660667.js"></script>
+</body>
+
+</html>
